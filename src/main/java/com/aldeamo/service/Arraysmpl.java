@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,16 +18,22 @@ public class Arraysmpl implements ArraysService {
 
     @Override
     public void poblar() {
+        if (getArraysById(1) != null) {
+            saveData(1,"2,4,5,6,7,8");
+            saveData(2,"3,7,9,5,4,2");
+            saveData(3,"5,7,9,11,13");
+            saveData(4,"6,4,2,12,15");
+            saveData(5,"7,10,15,11,9");
+        }
+    }
+
+    private void saveData(int id, String imputArray) {
         try {
             Arrays data = new Arrays();
-            data.setId(1);
-            data.setInput_array("2,4,5,6,7,8");
-            arrayRepository.save(data);
-            /*rrayRepository.save(new Arrays(2, "3,7,9,5,4,2"));
-            arrayRepository.save(new Arrays(3, "5,7,9,11,13"));
-            arrayRepository.save(new Arrays(4, "6,4,2,12,15"));
-            arrayRepository.save(new Arrays(5, "7,10,15,11,9"));*/
-        }catch (Exception e){
+            data.setId(id);
+            data.setInput_array(imputArray);
+            this.arrayRepository.save(data);
+        } catch (Exception e) {
             throw new NegocioException("Se presentaron inconvenientes en poblar los datos");
         }
     }
@@ -34,11 +41,11 @@ public class Arraysmpl implements ArraysService {
     @Override
     public Arrays getArraysById(long id) {
         Optional<Arrays> data = this.arrayRepository.findById(id);
-        if (data.isPresent()) {
-            return data.get();
-        }else {
-            throw new NegocioException("Registro no encontrado con id: " + id);
-        }
+        return data.isPresent() ? data.get() : new Arrays();
+    }
 
+    @Override
+    public List<Arrays> getAllArrays() {
+        return this.arrayRepository.findAll();
     }
 }

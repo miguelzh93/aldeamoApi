@@ -18,10 +18,21 @@ public class ServicioBar {
 
     @CrossOrigin(origins = "*" )
     @GetMapping("/bar/{id}")
-    public Respuesta poblar(@PathVariable int id) {
+    public Respuesta getArrayByiD(@PathVariable int id) {
         try {
             arraysService.poblar();
             respuesta.setCuerpo(arraysService.getArraysById(id));
+        } catch (NegocioException e) {
+            respuesta.setError(e.getMessage());
+        }
+        return respuesta;
+    }
+
+    @CrossOrigin(origins = "*" )
+    @GetMapping("/bar/")
+    public Respuesta getAllArrays() {
+        try {
+            respuesta.setCuerpo(arraysService.getAllArrays());
         } catch (NegocioException e) {
             respuesta.setError(e.getMessage());
         }
