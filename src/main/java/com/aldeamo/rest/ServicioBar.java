@@ -1,8 +1,12 @@
 package com.aldeamo.rest;
 
+import com.aldeamo.entity.Arrays;
 import com.aldeamo.exception.NegocioException;
 import com.aldeamo.service.ArraysService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,28 +18,38 @@ public class ServicioBar {
     @Autowired
     private ArraysService arraysService;
 
-    private Respuesta respuesta = new Respuesta();
-
     @CrossOrigin(origins = "*" )
     @GetMapping("/bar/{id}")
-    public Respuesta getArrayByiD(@PathVariable int id) {
+    public ResponseEntity getArrayByiD(@PathVariable int id) {
+        Respuesta respuesta = new Respuesta();
+        int status = 200;
         try {
             arraysService.poblar();
-            respuesta.setCuerpo(arraysService.getArraysById(id));
+            Arrays data = arraysService.getArraysById(id);
+            if (data.getInput_array() == null) {
+                status = 400;
+                respuesta.setError("No existen datos con el id :" + id);
+            }
+            respuesta.setCuerpo(data);
         } catch (NegocioException e) {
             respuesta.setError(e.getMessage());
+            status = 400;
         }
-        return respuesta;
+
+        return new ResponseEntity(respuesta, HttpStatus.resolve(status));
     }
 
     @CrossOrigin(origins = "*" )
     @GetMapping("/bar/")
-    public Respuesta getAllArrays() {
+    public ResponseEntity getAllArrays() {
+        Respuesta respuesta = new Respuesta();
+        int status = 200;
         try {
             respuesta.setCuerpo(arraysService.getAllArrays());
         } catch (NegocioException e) {
             respuesta.setError(e.getMessage());
+            status = 400;
         }
-        return respuesta;
+        return new ResponseEntity(respuesta, HttpStatus.resolve(status));
     }
 }
