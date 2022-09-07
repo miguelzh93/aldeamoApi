@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.aldeamo.pojo.Respuesta;
 
 @RestController
@@ -46,6 +43,25 @@ public class ServicioBar {
         int status = 200;
         try {
             respuesta.setCuerpo(arraysService.getAllArrays());
+        } catch (NegocioException e) {
+            respuesta.setError(e.getMessage());
+            status = 400;
+        }
+        return new ResponseEntity(respuesta, HttpStatus.resolve(status));
+    }
+
+    @CrossOrigin(origins = "*" )
+    @GetMapping("/bar/vasos")
+    @ResponseBody
+    public ResponseEntity getVasos(@RequestParam(name = "numIteraciones") Integer numIteraciones, @RequestParam(name = "idPila") Integer idPila) {
+        int status = 200;
+        Respuesta respuesta = new Respuesta();
+        if (numIteraciones == null || idPila == null) {
+            status = 400;
+            respuesta.setError("No se enviaron los parámetros necesarios");
+        }
+        try{
+            respuesta.setCuerpo(arraysService.getVasos(numIteraciones, idPila));
         } catch (NegocioException e) {
             respuesta.setError(e.getMessage());
             status = 400;

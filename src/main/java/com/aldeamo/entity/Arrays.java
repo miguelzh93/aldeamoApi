@@ -26,11 +26,4 @@ public class Arrays {
         this.input_array = input_array;
     }
 
-    /*public Arrays(int id, String input_array) {
-        this.id = id;
-        this.input_array = input_array;
-    }*/
-
-
-
 }
